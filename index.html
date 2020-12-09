@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat Vue App</title>
+
+    <!-- Libraries -->
+    <link rel="stylesheet" href="lib/bootstrap/css/bootstrap-reboot.min.css">
+    <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css">
+
+    <!-- Custom styling -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <section id="app" class="content py-5">
+        <router-view></router-view>
+    </section> <!-- end of content -->
+
+    <!-- Template: Home -->
+    <script type="text/x-template" id="home-template">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1><router-link to="/">Cat Vue App</router-link></h1>
+                </div>
+            </div>
+
+            <div class="row" v-if="!isLoadingBreed">
+                <div class="col-md-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label" for="breed">Available Breed</label>
+                        <select id="breed" class="form-control" v-model="currentBreedId" @change="switchCatBreed()">
+                            <option v-for="item, key in breeds" :value="item.id">{{item.name}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" v-if="isLoadingBreed || isLoadingCats">
+                <div class="col-lg-12">
+                    Loading, please wait...
+                </div>
+            </div>
+
+            <div id="catBox" class="row" v-show="!isLoadingCats">
+                <div class="col-md-12 catCol">
+                    <div class="card" v-for="item, key in catDisplay">
+                        <router-link :to='"/detail?breed="+currentBreedId+"&cid="+item.id'>
+                            <img class="card-img-top" :src="item.url">
+                        </router-link>
+                        <div class="card-body">
+                            <router-link class="btn btn-primary btn-block" :to='"/detail?breed="+currentBreedId+"&cid="+item.id'>View details</router-link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3" v-show="!isLoadingCats && cats.length > 0">
+                <div class="col-lg-12">
+                    <button class="btn btn-success" @click="showCats()" v-show='this.catDisplayCount < this.cats.length'>Get more cats</button>
+                </div>
+            </div>
+
+
+        </div>
+    </script>
+
+    <!-- Template: Detail -->
+    <script type="text/x-template" id="detail-template">
+        <div class="container">
+            <div class="row" v-if="!isLoadingCat">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <router-link class="btn btn-primary" :to='"/?breed="+currentBreedId'>Back</router-link>
+                        </div>
+                        <img class="card-img" :src="catDetail.url">
+                        <div class="card-body">
+                            <h4>{{catBreedInfo.name}}</h4>
+                            <h5>Origin: {{catBreedInfo.origin}}</h5>
+                            <h6>{{catBreedInfo.temperament}}</h6>
+                            <p>{{catBreedInfo.description}}</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row" v-if="isLoadingCat">
+                <div class="col-lg-12">
+                    Loading, please wait...
+                </div>
+            </div>
+
+        </div>
+    </script>
+
+
+
+    <!-- Libraries -->
+    <script src="lib/vue.min.js"></script>
+    <script src="lib/axios.min.js"></script>
+    <script src="lib/vue-router.js"></script>
+    <script src="lib/jquery.min.js"></script>
+    <script src="lib/masonry/masonry.pkgd.min.js"></script>
+    <script src="lib/masonry/imagesloaded.pkgd.min.js"></script>
+
+    <!-- Custom scripts -->
+    <script src="js/script.js"></script>
+</body>
+
+</html>
